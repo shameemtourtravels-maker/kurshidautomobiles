@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kurshid Automobiles - Premium</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    
+    <style>
+        :root {
+            --bg-color: #f8f9fa;
+            --text-main: #111111;
+            --text-muted: #666666;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --border-color: rgba(0, 0, 0, 0.1);
+            --shadow-color: rgba(0, 0, 0, 0.08);
+            --icon-primary: #5a67d8;
+            --icon-secondary: #ed64a6;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; scroll-behavior: smooth; }
+        body { background-color: var(--bg-color); color: var(--text-main); overflow-x: hidden; will-change: transform, opacity; }
+
+        /* DYNAMIC BACKGROUND */
+        .animated-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; overflow: hidden; background: #ffffff; }
+        .blob { position: absolute; filter: blur(80px); opacity: 0.5; border-radius: 50%; animation: float 12s infinite alternate ease-in-out; }
+        .blob1 { width: 500px; height: 500px; background: rgba(200, 220, 255, 0.5); top: -10%; left: -10%; }
+        .blob2 { width: 600px; height: 600px; background: rgba(255, 240, 200, 0.6); bottom: -20%; right: -10%; animation-delay: -6s; }
+        @keyframes float { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(40px, 60px) scale(1.1); } }
+
+        /* NAVBAR & LOGO */
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 6%; position: absolute; width: 100%; z-index: 100; opacity: 0; }
+        .brand-logo { width: clamp(180px, 25vw, 260px); height: auto; max-height: 120px; object-fit: contain; filter: drop-shadow(0px 15px 25px rgba(0,0,0,0.2)) drop-shadow(0px 0px 20px rgba(255, 255, 255, 0.9)); transition: transform 0.4s ease; transform-origin: left center; animation: logoPulse 3s infinite alternate ease-in-out; }
+        @keyframes logoPulse { 0% { filter: drop-shadow(0px 10px 15px rgba(0,0,0,0.15)) drop-shadow(0px 0px 15px rgba(255, 255, 255, 0.7)); transform: scale(1); } 100% { filter: drop-shadow(0px 15px 25px rgba(0,0,0,0.25)) drop-shadow(0px 0px 25px rgba(255, 255, 255, 1)); transform: scale(1.03); } }
+        .nav-links { display: flex; gap: 40px; }
+        .nav-links a { color: var(--text-main); text-decoration: none; font-size: 15px; font-weight: 500; transition: color 0.3s ease; }
+        .nav-links a:hover { color: #0056b3; }
+
+        /* COMPACT HERO SECTION - NO OVERLAP */
+        .hero { display: flex; align-items: center; justify-content: space-between; min-height: 100vh; padding: 120px 6% 40px; position: relative; gap: 30px; overflow: hidden; }
+        .dynamic-glow { position: absolute; width: 50vw; height: 50vw; max-width: 700px; max-height: 700px; background: radial-gradient(circle, rgba(0, 0, 0, 0.05) 0%, transparent 60%); border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1; pointer-events: none; transition: background 0.5s ease; }
+        
+        .left-content { flex: 1; z-index: 10; max-width: 450px; display: flex; flex-direction: column; }
+        .subtitle { font-size: clamp(14px, 2vw, 20px); font-weight: 500; color: var(--text-muted); margin-bottom: 10px; display: flex; align-items: center; gap: 15px; }
+        .lightning-icon { color: #ff9900; border: 1px solid #ddd; padding: 4px 12px; border-radius: 20px; font-size: 12px; background: #fff; }
+        .title { font-size: clamp(36px, 6vw, 65px); font-weight: 700; line-height: 1.1; margin-bottom: 15px; color: var(--text-main); }
+        .description { color: var(--text-muted); font-size: clamp(13px, 1.5vw, 15px); margin-bottom: 25px; line-height: 1.6; }
+        .order-btn-container { align-self: flex-start; z-index: 10; }
+        .order-btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; background: #111; padding: clamp(12px, 2vw, 16px) clamp(25px, 4vw, 35px); border-radius: 35px; color: #fff; text-decoration: none; font-size: clamp(14px, 1.5vw, 16px); font-weight: 600; transition: all 0.3s ease; box-shadow: 0 10px 20px rgba(0,0,0,0.15); white-space: nowrap; }
+        .order-btn:hover { background: #0056b3; transform: translateY(-3px); }
+
+        .center-image-container { flex: 1.5; display: flex; justify-content: center; align-items: center; position: relative; z-index: 5; width: 100%; min-height: 300px; }
+        .scooty-img { width: 100%; max-width: 650px; height: auto; object-fit: contain; filter: drop-shadow(0px 50px 35px rgba(0,0,0,0.2)) drop-shadow(0px 10px 10px rgba(0,0,0,0.05)); z-index: 5; will-change: transform, opacity; }
+        
+        .slider-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 50px; height: 50px; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.4); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 20; box-shadow: 0 8px 25px rgba(0,0,0,0.1); transition: all 0.3s ease; color: #111; }
+        .slider-arrow:hover { background: rgba(17, 17, 17, 0.85); color: #fff; transform: translateY(-50%) scale(1.1); border-color: #111; }
+        .arrow-left { left: -5%; } .arrow-right { right: -5%; }
+
+        .right-stats { flex: 0.8; display: flex; flex-direction: column; gap: 15px; align-items: flex-end; z-index: 10; }
+        .stat-card { background: var(--card-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid #ffffff; box-shadow: 0 15px 35px var(--shadow-color); padding: 12px 18px; border-radius: 16px; width: 210px; display: flex; align-items: center; gap: 15px; transition: all 0.3s ease; }
+        .stat-icon svg { width: 22px; height: 22px; }
+        .stat-info p { color: var(--text-muted); font-size: 11px; margin-bottom: 2px; font-weight: 500; }
+        .stat-info h4 { color: var(--text-main); font-size: 14px; font-weight: 700; white-space: nowrap; }
+
+        .watermark { position: absolute; right: -2%; top: 50%; transform: translateY(-50%) rotate(90deg); font-size: clamp(60px, 12vw, 150px); font-weight: 800; color: rgba(0, 0, 0, 0.03); z-index: 0; pointer-events: none; letter-spacing: 20px; white-space: nowrap; }
+
+        /* --- UPGRADED PREMIUM DARK CARD COLLECTION SECTION --- */
+        .collection-section { padding: 80px 6%; background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.03) 100%); position: relative; z-index: 10; }
+        .section-header { text-align: center; margin-bottom: 40px; }
+        .section-header h2 { font-size: clamp(28px, 5vw, 36px); font-weight: 700; color: var(--text-main); }
+        .section-header p { color: var(--text-muted); font-size: 14px; margin-top: 8px; font-weight: 500;}
+        
+        .category-section { margin-bottom: 60px; background: transparent; padding: 20px 0; border-radius: 25px; }
+        .category-title { font-size: 26px; font-weight: 800; color: #111; margin-bottom: 30px; padding-bottom: 15px; border-bottom: 2px solid #ccc; display: flex; align-items: center; gap: 15px; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 30px; }
+        
+        /* Refined Dark Mode Vehicle Card */
+        .vehicle-card { 
+            background: #141414; 
+            border-radius: 18px; 
+            padding: 25px 20px; 
+            text-align: center; 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #222;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        /* Premium hover glow */
+        .vehicle-card:hover { 
+            transform: translateY(-8px) !important; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4), 0 0 20px rgba(255,255,255,0.05); 
+            border-color: #444;
+        }
+        
+        /* Dashed Border Image Wrapper */
+        .card-img-wrapper {
+            border: 1.5px dashed #444; 
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 160px; 
+            min-height: 160px;
+            transition: border-color 0.3s ease, background 0.3s ease;
+        }
+        .vehicle-card:hover .card-img-wrapper { border-color: #888; background: rgba(255,255,255,0.02); }
+        .grid-img { width: 100%; height: 100%; max-height: 140px; object-fit: contain; transition: transform 0.5s ease; color: transparent; }
+        .vehicle-card:hover .grid-img { transform: scale(1.1); }
+        
+        .vehicle-card h3 { font-size: 20px; color: #ffffff; margin-bottom: 6px; font-weight: 700; letter-spacing: 0.5px; }
+        .vehicle-card p { font-size: 13px; color: #999999; margin-bottom: 25px; font-weight: 400; }
+        
+        .card-btn { 
+            background: transparent; color: #ffffff; border: 1px solid #555; padding: 10px 25px; 
+            border-radius: 30px; font-size: 14px; font-weight: 500; cursor: pointer; transition: 0.3s; display: inline-block; width: 100%;
+        }
+        .vehicle-card:hover .card-btn { background: #ffffff; color: #111111; border-color: #ffffff; font-weight: 600;}
+
+        /* MODAL STYLES */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 9999; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal-content { background: #fff; padding: 30px; border-radius: 20px; width: 90%; max-width: 400px; text-align: center; position: relative; transform: translateY(30px); transition: transform 0.3s ease; box-shadow: 0 25px 50px rgba(0,0,0,0.2); }
+        .modal-overlay.active .modal-content { transform: translateY(0); }
+        .close-btn { position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; color: #888; transition: color 0.3s; line-height: 1; }
+        .close-btn:hover { color: #111; }
+        .modal-img { width: 100%; height: 160px; object-fit: contain; margin-bottom: 20px; color: transparent; }
+        .modal-title { font-size: 22px; font-weight: 700; color: #111; margin-bottom: 5px; }
+        .modal-variant { font-size: 14px; color: #666; margin-bottom: 20px; font-weight: 600; }
+        .modal-price-box { background: #f8f9fa; padding: 15px; border-radius: 12px; border: 1px solid #eee; margin-bottom: 20px; }
+        .modal-price-label { font-size: 12px; color: #666; text-transform: uppercase; letter-spacing: 1px; }
+        .modal-price { font-size: 26px; font-weight: 800; color: #111; margin-top: 5px; }
+        .modal-book-btn { display: block; width: 100%; background: #111; color: #fff; padding: 12px; border-radius: 30px; text-decoration: none; font-weight: 600; transition: 0.3s; margin-top: 10px; }
+        .modal-book-btn:hover { background: #0056b3; }
+
+        /* WHY CHOOSE US */
+        .features-section { padding: 80px 6%; background: #ffffff; position: relative; z-index: 10; }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 40px; margin-top: 40px; justify-content: center; }
+        .feature-item { text-align: center; padding: 20px; background: #f8f9fa; border-radius: 20px; }
+        .feature-icon-wrapper { margin-bottom: 15px; display: inline-block; position: relative; }
+        .feature-icon-wrapper svg { width: 42px; height: 42px; stroke: var(--icon-primary); }
+        .feature-icon-wrapper::after { content: ''; position: absolute; bottom: -5px; right: -5px; width: 12px; height: 3px; background: var(--icon-secondary); transform: rotate(-45deg); border-radius: 2px; }
+        .feature-item h4 { font-size: 18px; font-weight: 700; color: var(--text-main); margin-bottom: 12px; line-height: 1.3; }
+        .feature-item p { font-size: 13px; color: var(--text-muted); line-height: 1.6; font-weight: 400; }
+
+        /* PROFESSIONAL FOOTER & CONTACT */
+        footer { background: #111; color: #fff; padding: 60px 6% 30px; position: relative; z-index: 10; border-top: 5px solid #0056b3; }
+        .footer-container { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 40px; max-width: 1200px; margin: 0 auto; margin-bottom: 40px; }
+        .footer-brand h2 { font-size: clamp(22px, 4vw, 28px); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; }
+        .footer-brand p { color: #aaa; font-size: 14px; max-width: 300px; line-height: 1.6; }
+        
+        .footer-contact h3 { font-size: 18px; margin-bottom: 20px; font-weight: 600; color: #fff; }
+        .contact-buttons { display: flex; flex-direction: column; gap: 12px; }
+        .contact-btn { 
+            display: flex; align-items: center; gap: 12px; background: #222; color: #fff; 
+            padding: 12px 20px; border-radius: 12px; text-decoration: none; font-size: 15px; font-weight: 500;
+            transition: all 0.3s ease; border: 1px solid #333; width: fit-content;
+        }
+        .contact-btn svg { width: 22px; height: 22px; }
+        .contact-btn.whatsapp:hover { background: #25D366; border-color: #25D366; color: #fff; }
+        .contact-btn.phone:hover { background: #0056b3; border-color: #0056b3; }
+        .contact-btn.email:hover { background: #EA4335; border-color: #EA4335; }
+        
+        .footer-bottom { text-align: center; padding-top: 20px; border-top: 1px solid #333; font-size: 13px; color: #777; }
+
+        /* ROBUST MOBILE COMPACT FIXES - NO OVERLAP */
+        .anim-group { opacity: 0; } 
+        
+        @media (max-width: 1024px) {
+            .hero { flex-direction: column; padding-top: 130px; height: auto; text-align: center; }
+            .left-content { align-items: center; text-align: center; max-width: 100%; margin-bottom: 20px; z-index: 10; }
+            .description { display: none; } 
+            .order-btn-container { margin-top: 10px; align-self: center; } 
+            
+            .center-image-container { width: 100%; margin: 20px 0; z-index: 5; }
+            .scooty-img { width: 95%; max-height: 35vh; margin: 0 auto; display: block; }
+            .slider-arrow { width: 45px; height: 45px; z-index: 20; }
+            .arrow-left { left: 0%; } .arrow-right { right: 0%; } 
+            
+            .right-stats { flex-direction: row; flex-wrap: wrap; justify-content: center; width: 100%; gap: 10px; margin-top: 10px; z-index: 10; }
+            .stat-card { width: auto; flex: 1; max-width: 180px; justify-content: center; padding: 12px; }
+            .watermark { top: 15%; right: 50%; transform: translateX(50%) rotate(0deg); opacity: 0.05; }
+        } @media (max-width: 768px) {
+            nav { flex-direction: column; gap: 8px; padding: 12px 5%; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); }
+            .brand-logo { transform-origin: center; max-height: 80px; }
+            .nav-links { gap: 15px; font-size: 13px; }
+            
+            .hero { padding-top: 140px; padding-bottom: 30px; gap: 15px; }
+            .title { font-size: 32px; margin-bottom: 0; }
+            .subtitle { margin-bottom: 8px; font-size: 13px; }
+            .scooty-img { max-height: 30vh; } 
+            
+            .right-stats { flex-direction: row; justify-content: space-between; gap: 8px; width: 100%; }
+            .stat-card { flex-direction: column; padding: 10px 5px; gap: 5px; border-radius: 12px; text-align: center; }
+            .stat-card .stat-icon svg { width: 20px; height: 20px; margin: 0 auto; }
+            .stat-info p { font-size: 10px; }
+            .stat-info h4 { font-size: 12px; }
+            
+            .footer-container { flex-direction: column; text-align: center; align-items: center; }
+            .footer-brand p { margin: 0 auto; }
+            .contact-buttons { align-items: center; width: 100%; }
+            .contact-btn { width: 100%; justify-content: center; max-width: 300px; }
+        }
+    </style>
+</head>
+<body>
+  <div id="main-site">
+        <div class="animated-bg">
+            <div class="blob blob1"></div>
+            <div class="blob blob2"></div>
+        </div>
+
+        <nav class="nav-animate">
+            <img src="logo.png" alt="Kurshid Logo" class="brand-logo">
+            <div class="nav-links">
+                <a href="#">Home</a>
+                <a href="about.html">About Us</a>
+                <a href="contact.html">Contact Us</a>
+            </div>
+            <div style="width: 120px;" class="desktop-spacer"></div>
+        </nav>
+
+        <div class="dynamic-glow" id="glow-bg"></div>
+        <div class="watermark" id="v-watermark">ACTIVA</div>
+
+        <main class="hero">
+            <div class="left-content">
+                <div class="subtitle anim-group" id="v-subtitle">
+                    India's Favorite <span class="lightning-icon">⭐</span>
+                </div>
+                <h1 class="title anim-group" id="v-title">Honda <br> Activa 110</h1>
+                <p class="description anim-group" id="v-desc">
+                    Experience the ultimate comfort and reliability. Now fully equipped with H-Smart technology.
+                </p>
+                <div class="order-btn-container anim-group">
+                    <a href="booking.html?model=activa-110&variant=null" id="v-order-link" class="order-btn">
+                        Book Now <span class="arrow">→</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="center-image-container">
+                <div class="slider-arrow arrow-left" onclick="prevVehicle()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                </div>
+                
+                <img src="activa-110.png" id="v-img" class="scooty-img anim-group" alt="Honda Vehicle">
+                
+                <div class="slider-arrow arrow-right" onclick="nextVehicle()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                </div>
+            </div>
+
+            <div class="right-stats">
+                <div class="stat-card anim-group dyn-stat">
+                    <div class="stat-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg></div>
+                    <div class="stat-info"><p>Engine</p><h4 id="s-engine">109.51 cc</h4></div>
+                </div>
+                <div class="stat-card anim-group dyn-stat">
+                    <div class="stat-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg></div>
+                    <div class="stat-info"><p>Top Speed</p><h4 id="s-speed">85 kmph</h4></div>
+                </div>
+                <div class="stat-card anim-group dyn-stat">
+                    <div class="stat-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" x2="15" y1="22" y2="22"/><line x1="4" x2="14" y1="9" y2="9"/><path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"/><path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2h0a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L18 5"/></svg></div>
+                    <div class="stat-info"><p>Mileage</p><h4 id="s-mileage">50 kmpl</h4></div>
+                </div>
+            </div>
+        </main>
+
+        <section class="collection-section" id="collection">
+            <div class="section-header scroll-anim">
+                <h2>Our Complete Fleet</h2>
+                <p>Explore our vast collection of Premium Scooters and Motorcycles.</p>
+            </div>
+            <div id="collection-content"></div>
+        </section>
+
+        <section class="features-section">
+            <div class="section-header scroll-anim" style="margin-bottom: 20px;">
+                <h2>Why Choose Us?</h2>
+            </div>
+            <div class="features-grid">
+                <div class="feature-item scroll-anim">
+                    <div class="feature-icon-wrapper">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-3 11.5V14l-3-3 4-3 2 3h2"/><path d="M6 14h2.5l1.5-3"/>
+                        </svg>
+                    </div>
+                    <h4>Trusted Two-Wheeler Deals</h4>
+                    <p>Our commitment ensures you get the most reliable and transparent deals on all scooters and bikes.</p>
+                </div>
+                <div class="feature-item scroll-anim">
+                    <div class="feature-icon-wrapper"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></div>
+                    <h4>Transparent Pricing</h4>
+                    <p>No hidden charges. The price you see is the final on-road price you pay for your ride.</p>
+                </div>
+                <div class="feature-item scroll-anim">
+                    <div class="feature-icon-wrapper"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><circle cx="12" cy="10" r="3"/></svg></div>
+                    <h4>Special Finance Offers</h4>
+                    <p>Our stress-free finance department can find financial solutions to fund your two-wheeler.</p>
+                </div>
+            </div>
+        </section>
+
+        <footer id="contact">
+            <div class="footer-container">
+                <div class="footer-brand scroll-anim">
+                    <h2>Kurshid Automobiles</h2>
+                    <p>Your trusted destination for premium Honda two-wheelers, delivering excellence in sales, finance, and support.</p>
+                </div>
+                <div class="footer-contact scroll-anim">
+                    <h3>Direct Contact</h3>
+                    <div class="contact-buttons">
+                        <a href="https://wa.me/919691782956" target="_blank" class="contact-btn whatsapp">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                            +91 96917 82956
+                        </a>
+                        <a href="tel:+917869193884" class="contact-btn phone">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                            +91 78691 93884
+                        </a>
+                        <a href="mailto:kurshidautomobile@gmail.com" class="contact-btn email">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                            kurshidautomobile@gmail.com
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom scroll-anim">
+                &copy; 2026 Kurshid Automobiles. All Rights Reserved.
+            </div>
+        </footer>
+
+        <div class="modal-overlay" id="detail-modal">
+            <div class="modal-content">
+                <span class="close-btn" onclick="closeModal()">&times;</span>
+                <img src="" id="modal-img" class="modal-img" alt="Vehicle">
+                <h3 class="modal-title" id="modal-title">Vehicle Name</h3>
+                <p class="modal-variant" id="modal-variant">Variant: STD</p>
+                <div class="modal-price-box">
+                    <div class="modal-price-label">Complete On-Road Price</div>
+                    <div class="modal-price" id="modal-price">₹0</div>
+                </div>
+                <a href="#contact" class="modal-book-btn" onclick="closeModal()">Contact to Book</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        // INITIAL LOAD ANIMATIONS
+        window.addEventListener('load', () => {
+            gsap.to(".nav-animate", { opacity: 1, duration: 0.5 });
+            gsap.fromTo(".nav-animate", { y: -30 }, { y: 0, duration: 1, ease: "power3.out" });
+            gsap.fromTo(".anim-group", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 1, stagger: 0.1, ease: "power3.out" });
+            
+            initScrollAnimations();
+        });
+
+        // HERO SLIDER DATA
+        const heroVehicles = [
+            { id: "activa-110", title: "Honda <br> Activa 110", subtitle: "India's Favorite", icon: "⭐", desc: "Experience the ultimate comfort and reliability.", img: "activa-110.png", watermark: "ACTIVA", engine: "109.51 cc", speed: "85 kmph", mileage: "50 kmpl", glowColor: "rgba(0, 0, 0, 0.04)" },
+            { id: "shine-100-dx", title: "Honda <br> Shine 100 DX", subtitle: "Reliable Commuter", icon: "🏍️", desc: "The perfect balance of performance and economy.", img: "shine-100-dx.png", watermark: "SHINE", engine: "98.98 cc", speed: "85 kmph", mileage: "65 kmpl", glowColor: "rgba(0, 86, 179, 0.05)" },
+            { id: "sp-125-new", title: "Honda <br> SP 125 New", subtitle: "Advanced & Sporty", icon: "🏁", desc: "Redefining advanced technology with a dynamic sporty design.", img: "sp-125.png", watermark: "SP 125", engine: "123.94 cc", speed: "100 kmph", mileage: "60 kmpl", glowColor: "rgba(220, 53, 69, 0.04)" },
+            { id: "activa-125", title: "Honda <br> Activa 125", subtitle: "Premium Scooter", icon: "✨", desc: "Step up to the premium 125cc experience.", img: "activa-125.png", watermark: "ACTIVA 125", engine: "124.00 cc", speed: "90 kmph", mileage: "47 kmpl", glowColor: "rgba(255, 193, 7, 0.06)" }
+        ];
+
+        let currentIndex = 0;
+        let slideTimer;
+
+        function updateHeroUI(data) {
+            gsap.to([".dyn-stat h4", "#v-title", "#v-subtitle", "#v-desc", "#v-img", "#v-watermark"], {
+                opacity: 0, y: -10, duration: 0.3, ease: "power2.inOut",
+                onComplete: () => {
+                    document.getElementById('v-subtitle').innerHTML = `${data.subtitle} <span class="lightning-icon">${data.icon}</span>`;
+                    document.getElementById('v-title').innerHTML = data.title;
+                    document.getElementById('v-desc').innerText = data.desc;
+                    document.getElementById('v-img').src = data.img;
+                    document.getElementById('v-watermark').innerText = data.watermark;
+                    document.getElementById('s-engine').innerText = data.engine;
+                    document.getElementById('s-speed').innerText = data.speed;
+                    document.getElementById('s-mileage').innerText = data.mileage;
+                    document.getElementById('glow-bg').style.background = `radial-gradient(circle, ${data.glowColor} 0%, transparent 60%)`;
+                    
+                    // UPDATE LINK FOR BOOKING PAGE
+                    document.getElementById('v-order-link').href = `booking.html?model=${encodeURIComponent(data.id)}&variant=null`;
+                    
+                    gsap.fromTo([".dyn-stat h4", "#v-title", "#v-subtitle", "#v-desc", "#v-img", "#v-watermark"], 
+                        { y: 10, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: "power3.out" }
+                    );
+                }
+            });
+        }
+
+        function changeVehicle() { currentIndex = (currentIndex + 1) % heroVehicles.length; updateHeroUI(heroVehicles[currentIndex]); }
+        function nextVehicle() { clearInterval(slideTimer); changeVehicle(); slideTimer = setInterval(changeVehicle, 3500); }
+        function prevVehicle() { clearInterval(slideTimer); currentIndex = (currentIndex - 1 + heroVehicles.length) % heroVehicles.length; updateHeroUI(heroVehicles[currentIndex]); slideTimer = setInterval(changeVehicle, 3500); }
+        slideTimer = setInterval(changeVehicle, 3500);
+
+        // --- ALL VEHICLES USING .png ---
+        const listData = [
+            {
+                category: "Premium Scooters",
+                items: [
+                    { name: "Activa", variant: "STD", price: "1,00,389", img: "activa-std.png" },
+                    { name: "Activa", variant: "DLX", price: "1,11,195", img: "activa-dlx.png" },
+                    { name: "Activa", variant: "H-SMART", price: "1,15,073", img: "activa-hsmart.png" },
+                    { name: "Activa Special 25 TH", variant: "DLX", price: "1,10,765", img: "activa-25th.png" },
+                    { name: "Dio", variant: "STD", price: "95,197", img: "dio-std.png" },
+                    { name: "Dio", variant: "DLX", price: "1,07,940", img: "dio-dlx.png" },
+                    { name: "Dio", variant: "H-SMART", price: "97,002", img: "dio-hsmart.png" },
+                    { name: "Dio 125", variant: "DISC", price: "1,18,536", img: "dio-125-disc.png" },
+                    { name: "Dio 125", variant: "H-SMART", price: "1,23,938", img: "dio-125-hsmart.png" },
+                    { name: "Activa 125", variant: "DISC", price: "1,16,867", img: "activa-125-disc.png" },
+                    { name: "Activa 125 SE 25TH", variant: "DISC", price: "1,16,437", img: "activa-125-se.png" },
+                    { name: "Activa 125 OBD2B", variant: "H-SMART", price: "1,21,716", img: "activa-125-obd2b.png" }
+                ]
+            },
+            {
+                category: "Motorcycles",
+                items: [
+                    { name: "Shine 100", variant: "DRUM", price: "82,097", img: "shine-100.png" },
+                    { name: "Shine 100 DX", variant: "DLX", price: "87,141", img: "shine-100-dx.png" },
+                    { name: "Livo", variant: "DRUM", price: "97,636", img: "livo-drum.png" },
+                    { name: "Livo", variant: "DISC", price: "1,00,437", img: "livo-disc.png" },
+                    { name: "Shine 125", variant: "DRUM", price: "1,00,753", img: "shine-125-drum.png" },
+                    { name: "Shine 125", variant: "DISC", price: "1,05,511", img: "shine-125-disc.png" },
+                    { name: "CB Hornet 125", variant: "DISC", price: "1,37,264", img: "cb-hornet-125.png" },
+                    { name: "SP 125", variant: "DRUM", price: "1,08,697", img: "sp-125-drum.png" },
+                    { name: "SP 125", variant: "DISC", price: "1,16,977", img: "sp-125-disc.png" },
+                    { name: "SP 125 25TH Anv.", variant: "E-EDITION", price: "1,15,422", img: "sp-125-25th.png" },
+                    { name: "Unicorn 160", variant: "ABS", price: "1,40,514", img: "unicorn-160.png" },
+                    { name: "SP 160", variant: "S. DISC", price: "1,43,828", img: "sp-160-sdisc.png" },
+                    { name: "SP 160", variant: "D.DISC", price: "1,49,843", img: "sp-160-ddisc.png" },
+                    { name: "Hornet 2.0", variant: "ABS", price: "1,77,803", img: "hornet-2.0.png" },
+                    { name: "NX200", variant: "ABS", price: "1,89,338", img: "nx200.png" }
+                ]
+            }
+        ];
+
+        const collectionContainer = document.getElementById('collection-content');
+        let htmlOutput = '';
+        let globalVehicles = []; 
+
+        listData.forEach(section => {
+            htmlOutput += `
+            <div class="category-section">
+                <h3 class="category-title scroll-anim">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#5a67d8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg>
+                    ${section.category}
+                </h3>
+                <div class="grid-container">
+            `;
+            
+            section.items.forEach(veh => {
+                const globalIndex = globalVehicles.length;
+                globalVehicles.push(veh);
+                
+                htmlOutput += `
+                    <div class="vehicle-card grid-card-anim">
+                        <div class="card-img-wrapper">
+                            <img src="${veh.img}" class="grid-img" alt="${veh.name}">
+                        </div>
+                        <h3>${veh.name}</h3>
+                        <p>Variant: ${veh.variant}</p>
+                        <button class="card-btn" onclick="window.location.href='booking.html?model=${encodeURIComponent(veh.name)}&variant=${encodeURIComponent(veh.variant)}'">Book Now</button>
+                    </div>
+                `;
+            });
+            htmlOutput += `</div></div>`;
+        });
+        
+        collectionContainer.innerHTML = htmlOutput;
+
+        // MODAL (Kept in code but no longer triggered by Book Now button as requested)
+        const modal = document.getElementById('detail-modal');
+        function openModal(index) {
+            const v = globalVehicles[index];
+            document.getElementById('modal-img').src = v.img;
+            document.getElementById('modal-title').innerText = v.name;
+            document.getElementById('modal-variant').innerText = `Variant: ${v.variant}`;
+            document.getElementById('modal-price').innerText = `₹${v.price}`;
+            modal.classList.add('active');
+        }
+        function closeModal() { modal.classList.remove('active'); }
+        modal.addEventListener('click', (e) => { if(e.target === modal) closeModal(); });
+
+        // INITIALIZE SCROLLANIMATIONS
+        function initScrollAnimations() {
+            ScrollTrigger.refresh();
+
+            gsap.utils.toArray('.scroll-anim').forEach(element => {
+                gsap.fromTo(element, 
+                    { opacity: 0, y: 30 }, 
+                    { opacity: 1, y: 0, duration: 0.8, ease: "power3.out", scrollTrigger: { trigger: element, start: "top 85%" } }
+                );
+            });
+
+            gsap.utils.toArray('.grid-container').forEach(grid => {
+                gsap.fromTo(grid.querySelectorAll('.grid-card-anim'), 
+                    { y: 60, opacity: 0 },
+                    { y: 0, opacity: 1, duration: 0.7, stagger: 0.15, ease: "power3.out", scrollTrigger:{ trigger: grid, start: "top 85%" } }
+                );
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us | Kurshid Automobiles</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    
+    <style>
+        :root {
+            --bg-color: #f8f9fa;
+            --text-main: #111111;
+            --text-muted: #666666;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --border-color: rgba(0, 0, 0, 0.05);
+            --shadow-color: rgba(0, 0, 0, 0.08);
+            --phone-blue: #007AFF;
+            --gold: #FFD700;
+        }
+
+        * { 
+            margin: 0; padding: 0; box-sizing: border-box; 
+            font-family: 'Poppins', sans-serif; 
+            -webkit-tap-highlight-color: transparent; 
+        }
+
+        body { 
+            background-color: var(--bg-color); 
+            color: var(--text-main); 
+            overflow-x: hidden; 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+        }
+
+        /* DYNAMIC BACKGROUND ORBS */
+        .animated-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; overflow: hidden; background: #ffffff; }
+        .blob { position: absolute; filter: blur(80px); opacity: 0.5; border-radius: 50%; animation: float 12s infinite alternate ease-in-out; }
+        .blob1 { width: 400px; height: 400px; background: rgba(200, 220, 255, 0.4); top: -10%; left: -10%; }
+        .blob2 { width: 500px; height: 500px; background: rgba(255, 240, 200, 0.5); bottom: -10%; right: -10%; animation-delay: -6s; }
+        @keyframes float { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(30px, 40px) scale(1.1); } }
+
+        /* NAVBAR */
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 6%; position: absolute; width: 100%; z-index: 100; }
+        .brand-logo { width: clamp(140px, 18vw, 200px); transition: 0.3s; }
+        .nav-links { display: flex; gap: 30px; }
+        .nav-links a { color: var(--text-main); text-decoration: none; font-size: 15px; font-weight: 500; transition: color 0.3s ease; }
+        .nav-links a:hover { color: var(--phone-blue); }
+
+        /* MAIN CONTAINER */
+        .container { 
+            flex: 1; max-width: 1050px; margin: 0 auto; 
+            padding: 140px 6% 80px; width: 100%; z-index: 10; 
+        }
+        
+        /* =========================================
+           HIGHLIGHTED PREMIUM OWNER CARD 
+           ========================================= */
+        .owner-card { 
+            background: linear-gradient(145deg, #ffffff, #f4f8ff);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            padding: 35px; border-radius: 28px; margin-bottom: 70px; 
+            border: 1px solid rgba(0, 122, 255, 0.2);
+            display: flex; flex-direction: column; align-items: center; text-align: center; gap: 25px;
+            /* Highlight Animation */
+            animation: ownerFloat 5s infinite ease-in-out;
+            position: relative;
+        }
+
+        /* VIP Glow & Float Effect */
+        @keyframes ownerFloat { 
+            0%, 100% { 
+                transform: translateY(0); 
+                box-shadow: 0 15px 35px rgba(0, 122, 255, 0.12), 0 0 20px rgba(0, 122, 255, 0.05); 
+            } 
+            50% { 
+                transform: translateY(-10px); 
+                box-shadow: 0 25px 50px rgba(0, 122, 255, 0.2), 0 0 40px rgba(0, 122, 255, 0.1); 
+            } 
+        }
+
+        .owner-img-container { position: relative; }
+        .owner-img-container::after {
+            content: ''; position: absolute; top: 5%; left: 5%; width: 90%; height: 90%;
+            background: var(--phone-blue); filter: blur(35px); opacity: 0.3; z-index: -1;
+            animation: pulseGlow 3s infinite alternate;
+        }
+        @keyframes pulseGlow { 0% { opacity: 0.2; transform: scale(0.9); } 100% { opacity: 0.45; transform: scale(1.15); } }
+
+        .owner-img { 
+            width: 170px; height: 170px; border-radius: 24px; object-fit: cover; 
+            background: #eee; box-shadow: 0 10px 25px rgba(0,0,0,0.15); 
+            position: relative; z-index: 2; border: 3px solid #fff;
+        }
+        
+        .owner-info { display: flex; flex-direction: column; gap: 6px; }
+        .owner-tag { 
+            display: inline-block; background: rgba(0, 122, 255, 0.1); color: var(--phone-blue); 
+            font-weight: 800; font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; 
+            padding: 6px 16px; border-radius: 20px; width: fit-content; margin: 0 auto;
+        }
+        .owner-name { font-size: clamp(28px, 4vw, 36px); font-weight: 800; color: #111; letter-spacing: -0.5px; margin-top: 5px; }
+        .owner-desc { color: var(--text-muted); font-size: 15px; line-height: 1.7; max-width: 550px; margin: 0 auto; font-weight: 500; }
+
+        /* SECTION TITLE */
+        .section-title { text-align: center; margin-bottom: 45px; font-size: clamp(30px, 5vw, 40px); font-weight: 800; color: #111; letter-spacing: -0.5px; }
+        
+        /* STAFF GRID */
+        .staff-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 30px; }
+        
+        .staff-card { 
+            background: var(--card-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            padding: 40px 25px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
+            text-align: center; border: 1px solid #ffffff;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            will-change: transform, box-shadow;
+        }
+        .staff-card:hover { 
+            transform: translateY(-10px); 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1); 
+            border-color: #f0f0f0; 
+        }
+        
+        /* FLOATING ICONS */
+        .icon-wrapper { 
+            width: 70px; height: 70px; background: #fff; border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.06); 
+            animation: iconFloat 3s infinite ease-in-out alternate;
+        }
+        .staff-card:nth-child(1) .icon-wrapper { animation-delay: 0s; }
+        .staff-card:nth-child(2) .icon-wrapper { animation-delay: 0.5s; }
+        .staff-card:nth-child(3) .icon-wrapper { animation-delay: 1s; }
+        .staff-card:nth-child(4) .icon-wrapper { animation-delay: 1.5s; }
+
+        @keyframes iconFloat { 0% { transform: translateY(0); } 100% { transform: translateY(-8px); } }
+        
+        .icon-wrapper i { font-size: 28px; color: var(--phone-blue); }
+        
+        .staff-name { font-size: 22px; font-weight: 700; color: #111; margin-bottom: 6px; }
+        .staff-role { color: var(--phone-blue); font-size: 11px; font-weight: 800; letter-spacing: 1.2px; margin-bottom: 15px; text-transform: uppercase; }
+        .staff-desc { font-size: 13.5px; color: var(--text-muted); line-height: 1.6; }
+
+        /* FOOTER */
+        footer { background: #fff; padding: 40px 6%; text-align: center; border-top: 1px solid #eee; z-index: 10; position: relative; }
+        .footer-brand { font-size: 22px; font-weight: 800; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
+        .footer-bottom { font-size: 13px; color: #888; }
+
+        /* DESKTOP ADJUSTMENTS */
+        @media (min-width: 768px) {
+            .owner-card { flex-direction: row; text-align: left; padding: 45px 55px; gap: 45px; }
+            .owner-desc { margin: 0; }
+            .owner-tag { margin: 0; }
+        }
+
+        /* MOBILE ADJUSTMENTS */
+        @media (max-width: 768px) {
+            nav { padding: 15px 5%; flex-direction: column; gap: 10px; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); position: fixed; top: 0; border-bottom: 1px solid #eee; }
+            .brand-logo { max-height: 70px; }
+            .nav-links { gap: 20px; font-size: 14px; }
+            .desktop-spacer { display: none; }
+            
+            .container { padding: 160px 5% 50px; }
+            .owner-card { padding: 35px 25px; gap: 20px; }
+            .staff-grid { grid-template-columns: 1fr; gap: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="animated-bg">
+    <div class="blob blob1"></div>
+    <div class="blob blob2"></div>
+</div>
+
+<nav class="nav-anim">
+    <a href="index.html">
+        <img src="logo.png" alt="Kurshid Logo" class="brand-logo">
+    </a>
+    <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="#" style="color: var(--phone-blue); font-weight: 700;">About</a>
+        <a href="contact.html">Contact</a>
+    </div>
+    <div class="desktop-spacer" style="width: 100px;"></div>
+</nav>
+
+<div class="container">
+    <div class="owner-card anim-owner">
+        <div class="owner-img-container">
+            <img src="owner-section.png" alt="Khursheed Qureshi" class="owner-img">
+        </div>
+        <div class="owner-info">
+            <span class="owner-tag">👑 Leadership & Founder</span>
+            <h1 class="owner-name">Khursheed Qureshi</h1>
+            <p class="owner-desc">Oversees the overall operations and vision of Kurshid Automobiles, ensuring premium service and absolute customer satisfaction.</p>
+        </div>
+    </div>
+
+    <h2 class="section-title anim-title">Our Expert Team</h2>
+    
+    <div class="staff-grid">
+        <div class="staff-card anim-card">
+            <div class="icon-wrapper"><i class="fas fa-sitemap"></i></div>
+            <h3 class="staff-name">Toufiq Qureshi</h3>
+            <p class="staff-role">Operations Manager</p>
+            <p class="staff-desc">Manages and coordinates between the mechanic, showroom arrangement, and reception staff to ensure flawless operations.</p>
+        </div>
+        
+        <div class="staff-card anim-card">
+            <div class="icon-wrapper"><i class="fas fa-wrench"></i></div>
+            <h3 class="staff-name">Arjun</h3>
+            <p class="staff-role">Mechanic</p>
+            <p class="staff-desc">Responsible for expert vehicle servicing, precision repairs, and overall maintenance of the fleet.</p>
+        </div>
+        
+        <div class="staff-card anim-card">
+            <div class="icon-wrapper"><i class="fas fa-gem"></i></div>
+            <h3 class="staff-name">Rahul</h3>
+            <p class="staff-role">Showroom Coordinator</p>
+            <p class="staff-desc">Manages the showroom layout, vehicle display, and provides excellent customer interactions on the floor.</p>
+        </div>
+        
+        <div class="staff-card anim-card">
+            <div class="icon-wrapper"><i class="fas fa-headset"></i></div>
+            <h3 class="staff-name">Dileshwari</h3>
+            <p class="staff-role">Receptionist</p>
+            <p class="staff-desc">Greets customers with a smile, handles all inquiries efficiently, and provides dedicated support at the front desk.</p>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <div class="footer-brand footer-anim">Kurshid Automobiles</div>
+    <div class="footer-bottom footer-anim">
+        &copy; 2026 Kurshid Automobiles. All Rights Reserved.
+    </div>
+</footer>
+
+<script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Ultra-Smooth Initial Load Animations
+    const tl = gsap.timeline();
+    
+    tl.from(".nav-anim", { y: -30, opacity: 0, duration: 1, ease: "expo.out" })
+      .from(".anim-owner", { y: 60, opacity: 0, scale: 0.9, duration: 1.2, ease: "back.out(1.2)" }, "-=0.6")
+      .from(".anim-title", { y: 20, opacity: 0, duration: 0.8, ease: "power3.out" }, "-=0.6")
+      .from(".anim-card", { 
+          y: 50, opacity: 0, scale: 0.9, duration: 0.8, 
+          stagger: 0.15, ease: "back.out(1.5)" 
+      }, "-=0.5");
+
+    // Scroll Trigger fallback
+    gsap.utils.toArray('.anim-card').forEach((card) => {
+        ScrollTrigger.create({
+            trigger: card,
+            start: "top 95%",
+            onEnter: () => gsap.to(card, { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "back.out(1.5)" })
+        });
+    });
+</script>
+
+</body>
+</html>

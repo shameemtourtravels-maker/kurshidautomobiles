@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Your Ride - Kurshid Automobiles</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    
+    <style>
+        :root {
+            /* PREMIUM WHITE THEME COLORS */
+            --bg-dark: #f8f9fa;
+            --panel-bg: #ffffff;
+            --text-main: #111111;
+            --text-muted: #666666;
+            --accent: #111111;
+            --border-color: rgba(0, 0, 0, 0.08);
+            --input-bg: #ffffff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        
+        body { 
+            background-color: var(--bg-dark); 
+            color: var(--text-main); 
+            min-height: 100vh; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            padding: 40px 5%;
+            background-image: radial-gradient(circle at 50% 0%, rgba(0, 0, 0, 0.03) 0%, transparent 60%);
+        }
+
+        /* BACK BUTTON */
+        .back-btn {
+            position: absolute; top: 30px; left: 5%;
+            color: var(--text-muted); text-decoration: none; font-size: 14px; font-weight: 500;
+            display: flex; align-items: center; gap: 8px; transition: 0.3s;
+        }
+        .back-btn:hover { color: #111; transform: translateX(-5px); }
+
+        /* MAIN CONTAINER */
+        .booking-container {
+            display: flex; width: 100%; max-width: 1100px;
+            background: var(--panel-bg); border-radius: 24px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.08);
+            overflow: hidden; opacity: 0; transform: translateY(30px);
+        }
+
+        /* LEFT PANEL: VEHICLE DETAILS */
+        .vehicle-panel {
+            flex: 1.2; padding: 50px 40px; background: linear-gradient(145deg, #ffffff 0%, #f4f5f7 100%);
+            border-right: 1px solid var(--border-color); display: flex; flex-direction: column;
+        }
+        .v-header { margin-bottom: 25px; }
+        .v-title { font-size: 32px; font-weight: 800; line-height: 1.1; margin-bottom: 5px; color: #111; }
+        .v-variant { display: inline-block; background: #eee; padding: 4px 12px; border-radius: 6px; font-size: 13px; font-weight: 600; color: #555; letter-spacing: 1px; }
+        
+        .v-image-wrapper { width: 100%; height: 220px; display: flex; justify-content: center; align-items: center; margin-bottom: 30px; }
+        .v-image { max-width: 90%; max-height: 100%; object-fit: contain; filter: drop-shadow(0 20px 20px rgba(0,0,0,0.15)); }
+
+        .price-breakdown { background: #fdfdfd; border-radius: 16px; padding: 25px; border: 1px solid #eaeaea; }
+        .price-title { font-size: 15px; font-weight: 600; color: #111; margin-bottom: 15px; border-bottom: 1px solid #eaeaea; padding-bottom: 10px; }
+        
+        .p-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; color: var(--text-muted); }
+        .p-row span:last-child { color: #222; font-weight: 600; }
+        .p-total { display: flex; justify-content: space-between; margin-top: 15px; padding-top: 15px; border-top: 1px dashed #ccc; font-size: 20px; font-weight: 800; color: #111; }
+        .p-total span:last-child { color: #0056b3; }
+
+        /* RIGHT PANEL: BOOKING FORM */
+        .form-panel { flex: 1; padding: 50px 40px; }
+        .form-title { font-size: 24px; font-weight: 700; margin-bottom: 8px; color: #111; }
+        .form-desc { font-size: 13px; color: var(--text-muted); margin-bottom: 35px; }
+
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 12px; font-weight: 600; color: #555; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .form-group input {
+            width: 100%; background: var(--input-bg); border: 1px solid #ddd;
+            padding: 14px 18px; border-radius: 12px; color: #111; font-size: 14px; transition: 0.3s; outline: none;
+        }
+        .form-group input:focus { border-color: #0056b3; background: #fff; box-shadow: 0 0 0 3px rgba(0, 86, 179, 0.1); }
+
+        .submit-btn {
+            width: 100%; background: #111111; color: #ffffff; padding: 16px; border: none; border-radius: 12px;
+            font-size: 15px; font-weight: 700; cursor: pointer; transition: 0.3s; margin-top: 10px;
+            display: flex; justify-content: center; align-items: center; gap: 10px;
+        }
+        .submit-btn:hover { background: #0056b3; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0, 86, 179, 0.2); }
+        .submit-btn svg { width: 20px; height: 20px; stroke: currentColor; }
+
+        /* LOADER / ERROR */
+        #error-msg { display: none; text-align: center; padding: 50px; color: #ff4d4d; width: 100%; }
+
+        @media (max-width: 900px) {
+            .booking-container { flex-direction: column; }
+            .vehicle-panel, .form-panel { padding: 35px 25px; }
+            .v-image-wrapper { height: 180px; }
+            body { padding: 80px 5% 40px; }
+            .back-btn { top: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <a href="index.html" class="back-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        Back to Fleet
+    </a>
+
+    <div id="error-msg">
+        <h2 style="color: #111;">Vehicle Not Found</h2>
+        <p style="color: #666;">Please select a vehicle from the home page to book.</p>
+        <br>
+        <a href="index.html" style="color: #0056b3; font-weight: 600; text-decoration: underline;">Go Back</a>
+    </div>
+
+    <div class="booking-container" id="booking-ui">
+        <div class="vehicle-panel">
+            <div class="v-header">
+                <h1 class="v-title" id="display-title">Honda Vehicle</h1>
+                <div class="v-variant" id="display-variant">STD</div>
+            </div>
+            
+            <div class="v-image-wrapper">
+                <img src="" id="display-img" class="v-image" alt="Vehicle">
+            </div>
+
+            <div class="price-breakdown">
+                <div class="price-title">Price Breakdown (CG)</div>
+                <div class="p-row"><span>Ex-Showroom</span> <span id="p-ex">₹0</span></div>
+                <div class="p-row"><span>Insurance</span> <span id="p-ins">₹0</span></div>
+                <div class="p-row"><span>Registration (RTO)</span> <span id="p-rto">₹0</span></div>
+                <div class="p-row"><span>Handling</span> <span id="p-hand">₹0</span></div>
+                <div class="p-row"><span>Accessories</span> <span id="p-acc">₹0</span></div>
+                <div class="p-row"><span>Extended Warranty (3+7)</span> <span id="p-ew">₹0</span></div>
+                <div class="p-row"><span>Teflon Coating</span> <span id="p-teflon">₹0</span></div>
+                
+                <div class="p-total"><span>Complete On-Road</span> <span id="p-total">₹0</span></div>
+            </div>
+        </div>
+
+        <div class="form-panel">
+            <h2 class="form-title">Complete Your Booking</h2>
+            <p class="form-desc">Enter your details below and our team will connect with you immediately via WhatsApp.</p>
+
+            <form id="bookingForm">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="custName" placeholder="e.g. John Doe" required>
+                </div>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" id="custPhone" placeholder="10-digit mobile number" pattern="[0-9]{10}" required>
+                </div>
+                <div class="form-group">
+                    <label>WhatsApp Number</label>
+                    <input type="tel" id="custWhatsapp" placeholder="Optional (if different from above)" pattern="[0-9]{10}">
+                </div>
+                
+                <button type="submit" class="submit-btn">
+                    Confirm & Send to WhatsApp
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // COMPREHENSIVE PRICE DATABASE
+        const priceDB = {
+            // ---> 4 MAIN HERO SECTION VEHICLES FALLBACKS <---
+            "activa-110-null": { img: "activa-110.png", ex: 87503, ins: 6173, rto: 8091, hand: 1770, acc: 5055, ew: 1853, teflon: 750, comp: 111195, title: "Honda Activa 110", overrideVariant: "DLX" },
+            "shine-100-dx-null": { img: "shine-100-dx.png", ex: 70046, ins: 5977, rto: 6693, hand: 1770, acc: 1467, ew: 838, teflon: 350, comp: 87141, title: "Honda Shine 100 DX", overrideVariant: "DLX" },
+            "sp-125-new-null": { img: "sp-125.png", ex: 95991, ins: 6269, rto: 8770, hand: 1770, acc: 1774, ew: 1853, teflon: 550, comp: 116977, title: "Honda SP 125 New", overrideVariant: "DISC" },
+            "activa-125-null": { img: "activa-125.png", ex: 92584, ins: 6231, rto: 8497, hand: 1770, acc: 5182, ew: 1853, teflon: 750, comp: 116867, title: "Honda Activa 125", overrideVariant: "DISC" },
+
+            // ---> ALL OTHER GRID VEHICLES <---
+            "Activa-STD": { img: "activa-std.png", ex: 77601, ins: 6062, rto: 7298, hand: 1770, acc: 5055, ew: 1853, teflon: 750, comp: 100389 },
+            "Activa-DLX": { img: "activa-dlx.png", ex: 87503, ins: 6173, rto: 8091, hand: 1770, acc: 5055, ew: 1853, teflon: 750, comp: 111195 },
+            "Activa-H-SMART": { img: "activa-hsmart.png", ex: 91056, ins: 6214, rto: 8375, hand: 1770, acc: 5055, ew: 1853, teflon: 750, comp: 115073 },
+            "Activa Special 25 TH-DLX": { img: "activa-25th.png", ex: 87108, ins: 8259, rto: 5970, hand: 1770, acc: 5055, ew: 1853, teflon: 750, comp: 110765 },
+            
+            "Dio-STD": { img: "dio-std.png", ex: 73711, ins: 6018, rto: 6986, hand: 1770, acc: 4109, ew: 1853, teflon: 750, comp: 95197 },
+            "Dio-DLX": { img: "dio-dlx.png", ex: 85388, ins: 6150, rto: 7920, hand: 1770, acc: 4109, ew: 1853, teflon: 750, comp: 107940 },
+            "Dio-H-SMART": { img: "dio-hsmart.png", ex: 75363, ins: 7320, rto: 5837, hand: 1770, acc: 4109, ew: 1853, teflon: 750, comp: 97002 },
+            
+            "Dio 125-DISC": { img: "dio-125-disc.png", ex: 94163, ins: 6249, rto: 8622, hand: 1770, acc: 5129, ew: 1853, teflon: 750, comp: 118536 },
+            "Dio 125-H-SMART": { img: "dio-125-hsmart.png", ex: 99113, ins: 6304, rto: 9019, hand: 1770, acc: 5129, ew: 1853, teflon: 750, comp: 123938 },
+            
+            "Activa 125-DISC": { img: "activa-125-disc.png", ex: 92584, ins: 6231, rto: 8497, hand: 1770, acc: 5182, ew: 1853, teflon: 750, comp: 116867 },
+            "Activa 125 SE 25TH-DISC": { img: "activa-125-se.png", ex: 92189, ins: 8666, rto: 6027, hand: 1770, acc: 5182, ew: 1853, teflon: 750, comp: 116437 },
+            "Activa 125 OBD2B-H-SMART": { img: "activa-125-obd2b.png", ex: 97028, ins: 6281, rto: 8852, hand: 1770, acc: 5182, ew: 1853, teflon: 750, comp: 121716 },
+
+            "Shine 100-DRUM": { img: "shine-100.png", ex: 65424, ins: 5924, rto: 6324, hand: 1770, acc: 1467, ew: 838, teflon: 350, comp: 82097 },
+            "Shine 100 DX-DLX": { img: "shine-100-dx.png", ex: 70046, ins: 5977, rto: 6693, hand: 1770, acc: 1467, ew: 838, teflon: 350, comp: 87141 },
+            "Livo-DRUM": { img: "livo-drum.png", ex: 78268, ins: 6069, rto: 7352, hand: 1770, acc: 1774, ew: 1853, teflon: 550, comp: 97636 },
+            "Livo-DISC": { img: "livo-disc.png", ex: 80835, ins: 6098, rto: 7557, hand: 1770, acc: 1774, ew: 1853, teflon: 550, comp: 100437 },
+            
+            "Shine 125-DRUM": { img: "shine-125-drum.png", ex: 81125, ins: 6102, rto: 7579, hand: 1770, acc: 1774, ew: 1853, teflon: 550, comp: 100753 },
+            "Shine 125-DISC": { img: "shine-125-disc.png", ex: 85484, ins: 6151, rto: 7929, hand: 1770, acc: 1774, ew: 1853, teflon: 550, comp: 105511 },
+            
+            "CB Hornet 125-DISC": { img: "cb-hornet-125.png", ex: 114582, ins: 6479, rto: 10256, hand: 1770, acc: 1774, ew: 1853, teflon: 550, comp: 137264 },
+            "SP 125-DRUM": { img: "sp-125-drum.png", ex: 88404, ins: 6184, rto: 8162, hand: 1770, acc: 1774, ew: 1853, teflon: 550, comp: 108697 },
+            "SP 125-DISC": { img: "sp-125-disc.png", ex: 95991, ins: 6269, rto: 8770, hand: 1770, acc: 1774, ew: 1853, teflon: 550, comp: 116977 },
+            "SP 125 25TH Anv.-E-EDITION": { img: "sp-125-25th.png", ex: 94595, ins: 6253, rto: 8627, hand: 1770, acc: 1774, ew: 1853, teflon: 550, comp: 115422 },
+            
+            "Unicorn 160-ABS": { img: "unicorn-160.png", ex: 113073, ins: 10669, rto: 10137, hand: 1770, acc: 1829, ew: 2386, teflon: 650, comp: 140514 },
+            "SP 160-S. DISC": { img: "sp-160-sdisc.png", ex: 115935, ins: 10703, rto: 10366, hand: 1770, acc: 2018, ew: 2386, teflon: 650, comp: 143828 },
+            "SP 160-D.DISC": { img: "sp-160-ddisc.png", ex: 121445, ins: 10768, rto: 10806, hand: 1770, acc: 2018, ew: 2386, teflon: 650, comp: 149843 },
+            "Hornet 2.0-ABS": { img: "hornet-2.0.png", ex: 147134, ins: 11073, rto: 12860, hand: 1770, acc: 1930, ew: 2386, teflon: 650, comp: 177803 },
+            "NX200-ABS": { img: "nx200.png", ex: 157728, ins: 11198, rto: 13709, hand: 1770, acc: 1897, ew: 2386, teflon: 650, comp: 189338 }
+        };
+
+        const formatRs = (num) => "₹" + num.toLocaleString('en-IN');
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            let modelName = urlParams.get('model');
+            let variantName = urlParams.get('variant');
+
+            if(modelName) {
+                // If variant is missing (like from the 4 main hero buttons), it becomes "null"
+                const dbKey = `${modelName}-${variantName}`;
+                const vData = priceDB[dbKey];
+
+                if(vData) {
+                    // Update variables if coming from hero section (override values)
+                    const finalTitle = vData.title ? vData.title : modelName;
+                    const finalVariant = vData.overrideVariant ? vData.overrideVariant : variantName;
+
+                    document.getElementById('display-title').innerText = finalTitle;
+                    document.getElementById('display-variant').innerText = finalVariant;
+                    document.getElementById('display-img').src = vData.img;
+                    
+                    document.getElementById('p-ex').innerText = formatRs(vData.ex);
+                    document.getElementById('p-ins').innerText = formatRs(vData.ins);
+                    document.getElementById('p-rto').innerText = formatRs(vData.rto);
+                    document.getElementById('p-hand').innerText = formatRs(vData.hand);
+                    document.getElementById('p-acc').innerText = formatRs(vData.acc);
+                    document.getElementById('p-ew').innerText = formatRs(vData.ew);
+                    document.getElementById('p-teflon').innerText = formatRs(vData.teflon);
+                    document.getElementById('p-total').innerText = formatRs(vData.comp);
+
+                    gsap.to("#booking-ui", { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" });
+                } else {
+                    document.getElementById('booking-ui').style.display = 'none';
+                    document.getElementById('error-msg').style.display = 'block';
+                }
+            } else {
+                document.getElementById('booking-ui').style.display = 'none';
+                document.getElementById('error-msg').style.display = 'block';
+            }
+
+            // WhatsApp Redirect
+            document.getElementById('bookingForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const name = document.getElementById('custName').value;
+                const phone = document.getElementById('custPhone').value;
+                const wp = document.getElementById('custWhatsapp').value || phone;
+                
+                const dbKey = `${modelName}-${variantName}`;
+                const vData = priceDB[dbKey];
+                
+                const finalTitle = vData.title ? vData.title : modelName;
+                const finalVariant = vData.overrideVariant ? vData.overrideVariant : variantName;
+                const finalPrice = vData.comp;
+
+                const message = `Hello Kurshid Automobiles! 👋\n\nI want to book a vehicle.\n\n*Vehicle Details:*\nModel: ${finalTitle}\nVariant: ${finalVariant}\nOn-Road Price: ${formatRs(finalPrice)}\n\n*My Details:*\nName: ${name}\nPhone: ${phone}\nWhatsApp: ${wp}\n\nPlease contact me for the next steps.`;
+                
+                const whatsappUrl = `https://wa.me/919691782956?text=${encodeURIComponent(message)}`;
+                window.open(whatsappUrl, '_blank');
+            });
+        });
+    </script>
+</body>
+</html>
